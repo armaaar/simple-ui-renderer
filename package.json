@@ -1,0 +1,17 @@
+{
+  "name": "learning-german",
+  "version": "1.0.0",
+  "description": "A small project to help me learn German",
+  "main": "index.js",
+  "scripts": {
+    "serve": "gulp"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "browser-sync": "^2.26.12",
+    "gulp": "^4.0.2",
+    "gulp-pug": "^4.0.1"
+  }
+}
