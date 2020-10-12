@@ -1,0 +1,105 @@
+{
+    "lectures": [
+        [
+            {
+                "word": "Ja",
+                "type": "affirmatives",
+                "english": "yes",
+                "arabic": "نعم"
+            },
+            {
+                "word": "Nein",
+                "type": "affirmatives",
+                "english": "No",
+                "arabic": "لا"
+            },
+            {
+                "word": "vielleicht",
+                "type": "affirmatives",
+                "english": "Maybe",
+                "arabic": "ربما"
+            },
+            {
+                "word": "das Auto",
+                "type": "neutral",
+                "english": "Car",
+                "arabic": "سيارة"
+            },
+            {
+                "word": "Wo",
+                "type": "interrogatives",
+                "english": "Where",
+                "arabic": "أين"
+            },
+            {
+                "word": "Wo ist das Auto",
+                "type": "questions",
+                "english": "Where is the car?",
+                "arabic": "أين السيارة؟"
+            },
+            {
+                "word": "Ich",
+                "type": "pronouns",
+                "english": "I",
+                "arabic": "أنا"
+            },
+            {
+                "word": "der Name",
+                "type": "word",
+                "subType": "masculine",
+                "english": "Name",
+                "arabic": "إسم"
+            },
+            {
+                "word": "Ich lerne Deutsch.",
+                "type": "sentences",
+                "english": "I learn German / I'm learning German",
+                "arabic": "أنا أتعلم الألمانية"
+            },
+            {
+                "word": "Lernen",
+                "variations": [
+                    "lerne",
+                    "lernst",
+                    "lernt"
+                ],
+                "type": "verbs",
+                "english": "Learn",
+                "arabic": "يتعلم"
+            },
+            {
+                "word": "der Mann",
+                "type": "word",
+                "subType": "masculine",
+                "english": "Man",
+                "arabic": "رجل"
+            },
+            {
+                "word": "die Frau",
+                "type": "word",
+                "subType": "feminine",
+                "english": "Woman",
+                "arabic": "امرأة"
+            },
+            {
+                "word": "im",
+                "more": "im => in dem",
+                "type": "prepositions",
+                "english": "in the",
+                "arabic": "في ال"
+            },
+            {
+                "word": "Der Mann ist im Auto",
+                "type": "sentences",
+                "english": "The man is in the car",
+                "arabic": "الرجل في السيارة"
+            },
+            {
+                "word": "Die Frau ist im Auto",
+                "type": "sentences",
+                "english": "The woman is in the car",
+                "arabic": "المرأة في السيارة"
+            }
+        ]
+    ]
+}
