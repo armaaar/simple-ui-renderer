@@ -1,0 +1,30 @@
+{
+  "types": {
+    "words": [
+      "masculine",
+      "feminine",
+      "neutral"
+    ],
+    "verbs": [],
+    "numbers":  [],
+    "prepositions": [],
+    "pronouns": [],
+    "affirmatives": [],
+    "interrogatives": [],
+    "questions": [],
+    "sentences": [],
+    "adjectives": [
+      "general",
+      "color"
+    ],
+    "job": []
+  },
+  "languages": [
+    "english",
+    "arabic"
+  ],
+  "exampleTypes": [
+      "questions",
+      "sentences"
+  ]
+}

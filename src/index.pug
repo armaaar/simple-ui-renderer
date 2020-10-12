@@ -1,5 +1,15 @@
+-
+  const { readJson } = require('./src/utils/readJson.js')
+  let { lectures } = readJson('./data/words.json');
 doctype html
 html
+  head
+    title Learning German
   body
-    h1 My Site
-    p Welcome to my super lame site.
+    each lecture, index in lectures
+      div
+        h1 Lecture #{index + 1}
+        ul
+          each entry in lecture
+            li= entry.word
+
