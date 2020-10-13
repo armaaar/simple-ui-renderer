@@ -11,5 +11,7 @@ html
         h1 Lecture #{index + 1}
         ul
           each entry in lecture
-            li= entry.word
+            li(onclick=(`textToSpeach('${entry.word}')`))= entry.word
 
+    script
+      include functions/textToSpeach.js
