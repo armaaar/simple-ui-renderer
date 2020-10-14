@@ -1,6 +1,3 @@
-const pug = require('gulp-pug');
-const browserSync = require('browser-sync').create();
-const data = require('gulp-data');
 const {
   task,
   series,
@@ -8,6 +5,19 @@ const {
   dest,
   watch
 } = require("gulp");
+
+const pug = require('gulp-pug');
+const browserSync = require('browser-sync').create();
+const data = require('gulp-data');
+const sass = require('gulp-sass');
+
+sass.compiler = require('node-sass');
+
+task('sass', function () {
+  return src('src/styles/styles.sass')
+    .pipe(sass().on('error', sass.logError))
+    .pipe(dest('src/styles'));
+});
 
 task('pug', function (cb) {
   src('src/*.pug')
@@ -23,8 +33,14 @@ task('serve', function() {
     server: "./dist"
   });
 
-  watch(['src/**/*.pug', 'src/**/*.js', 'data/**/*.json'], series('pug'));
+  watch(['src/styles/**/*.sass'], series('sass'));
+  watch([
+    'src/styles/styles.css',
+    'src/**/*.pug',
+    'src/**/*.js',
+    'data/**/*.json'
+  ], series('pug'));
   watch('dist/*.html').on('change', browserSync.reload);
 });
 
-task('default', series('pug', 'serve'));
+task('default', series('sass', 'pug', 'serve'));

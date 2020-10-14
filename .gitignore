@@ -1,2 +1,6 @@
+# node modules
 node_modules
+
+# build files
 dist
+src/styles/styles.css
