@@ -1,4 +1,13 @@
 function BaseComponent(el, componentName) {
+  // Add mounted flag
+  el.setAttribute('mounted', true)
+
+  // Add component to registered components list
+  if (!window.registeredComponents) {
+    window.registeredComponents = []
+  }
+  window.registeredComponents.push(componentName);
+
   // Disable parent elements styles
   el.style.display = 'unset';
   el.style.position = 'unset';
@@ -67,5 +76,19 @@ function BaseComponent(el, componentName) {
 
   this.render = () => {
     el.innerHTML = this.evaluateTemplate();
+    window.mountComponents();
   }
 }
+
+window.mountComponents = () => {
+  if (!window.registeredComponents) {
+    window.registeredComponents = []
+  }
+  window.registeredComponents.forEach((componentName) => {
+    document
+      .querySelectorAll(`${strToKababCase(componentName)}word-card:not([mounted])`)
+      .forEach((el) => new window[componentName](el))
+  })
+}
+
+window.addEventListener('load', window.mountComponents);

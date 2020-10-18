@@ -10,13 +10,11 @@ html
   body
     script
       include ../functions/BaseComponent.js
+      include ../functions/textToSpeach.js
+      include ../functions/toKababCase.js
 
     include ../../tmp/components.pug
     each lecture, index in lectures
       div
         h1 Lecture #{index + 1}
         +WordList(lecture)
-
-
-    script
-      include ../functions/textToSpeach.js

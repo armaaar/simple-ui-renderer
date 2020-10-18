@@ -8,7 +8,3 @@ function WordCard(el) {
 
   this.render();
 }
-
-window.addEventListener('load', () => {
-  document.querySelectorAll('word-card').forEach((el) => new WordCard(el))
-});
