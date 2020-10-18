@@ -8,6 +8,9 @@ html
   style
     include ../../tmp/styles.css
   body
+    script
+      include ../functions/BaseComponent.js
+
     include ../../tmp/components.pug
     each lecture, index in lectures
       div
