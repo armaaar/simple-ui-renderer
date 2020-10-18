@@ -1,7 +1,0 @@
-mixin createComponent(name, props)
-  -
-    const { randomString } = require('./src/utils/randomString.js');
-    const component = randomString(32, 'aA')
-  script.
-    var #{component} = new #{name}(!{JSON.stringify(props)})
-  - pug_mixins[`WordCardTemplate`](component, props)

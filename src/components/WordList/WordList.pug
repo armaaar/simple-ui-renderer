@@ -1,4 +1,4 @@
 mixin WordList(list)
   ul
     each entry in list
-      +WordCard(entry)
+      word-card(:entry=(entry))

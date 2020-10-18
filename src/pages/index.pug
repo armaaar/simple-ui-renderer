@@ -5,15 +5,15 @@ doctype html
 html
   head
     title Learning German
-    // include mixins
-    include ../../tmp/components.pug
   style
     include ../../tmp/styles.css
   body
+    include ../../tmp/components.pug
     each lecture, index in lectures
       div
         h1 Lecture #{index + 1}
         +WordList(lecture)
+
 
     script
       include ../functions/textToSpeach.js
