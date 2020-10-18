@@ -1,0 +1,13 @@
+include ../../utils/createComponent.pug
+
+script
+  include WordCard.js
+
+mixin WordCardTemplate(component, { entry } = {})
+  if component
+    li.WordCount(onclick=(`${component}.speak()`))= entry.word
+
+
+mixin WordCard(entry)
+  +WordCardTemplate
+  +createComponent('WordCard', {entry})

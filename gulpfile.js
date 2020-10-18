@@ -1,3 +1,6 @@
+const fs = require('fs');
+const rimraf = require("rimraf");
+
 const {
   task,
   series,
@@ -10,21 +13,40 @@ const pug = require('gulp-pug');
 const browserSync = require('browser-sync').create();
 const data = require('gulp-data');
 const sass = require('gulp-sass');
+const concat = require('gulp-concat');
 
 sass.compiler = require('node-sass');
 
 task('sass', function () {
-  return src('src/styles/styles.sass')
+  return src(['src/styles/styles.sass', 'src/components/**/*.sass'])
     .pipe(sass().on('error', sass.logError))
-    .pipe(dest('src/styles'));
+    .pipe(concat('styles.css'))
+    .pipe(dest('tmp'));
 });
 
+task('pug:components', function (cb) {
+  // create components file
+  const componentsContent = fs.readdirSync('src/components/')
+    .map((componentName) => `include ../src/components/${componentName}/${componentName}.pug`)
+    .join('\n');
+  if (!fs.existsSync('tmp')){
+    fs.mkdirSync('tmp');
+  }
+  fs.writeFileSync('tmp/components.pug', componentsContent);
+  cb();
+})
+
 task('pug', function (cb) {
-  src('src/*.pug')
+  src('src/pages/*.pug')
     .pipe(data(function (file) { return { require: require }; }))
     .pipe(pug())
     .pipe(dest('dist'))
     .pipe(browserSync.stream());
+  cb()
+});
+
+task('clean', function (cb) {
+  rimraf.sync('tmp');
   cb();
 });
 
@@ -33,14 +55,14 @@ task('serve', function() {
     server: "./dist"
   });
 
-  watch(['src/styles/**/*.sass'], series('sass'));
   watch([
-    'src/styles/styles.css',
+    'src/styles/**/*.sass',
     'src/**/*.pug',
     'src/**/*.js',
+    'src/components/**/*',
     'data/**/*.json'
-  ], series('pug'));
+  ], series('sass', 'pug:components', 'pug'));
   watch('dist/*.html').on('change', browserSync.reload);
 });
 
-task('default', series('sass', 'pug', 'serve'));
+task('default', series('clean', 'sass', 'pug:components', 'pug', 'serve'));
