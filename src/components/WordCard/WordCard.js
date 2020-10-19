@@ -3,7 +3,7 @@ function WordCard(el) {
 
   // define state
   this.speak = () => {
-    textToSpeach(this.entry.word)
+    textToSpeach(this.props.entry.word)
   }
 
   this.render();

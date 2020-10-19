@@ -20,22 +20,31 @@ function BaseComponent(el, componentName) {
   }
 
   // Define props
+  this.props = {};
   Object.values(el.attributes).forEach((attribute) => {
     if (attribute.name[0] === ':') {
-      this[attribute.name.substring(1)] = this.parseAttribute(attribute.value);
+      this.props[attribute.name.substring(1)] = this.parseAttribute(attribute.value);
     }
   })
 
-  // get children of the component
-  // filter `mounted` attribute to make sure to remount components
-  this.children = (el.innerHTML).replace(/mounted="true"/g, '')
+  // get slots
+  this.slots = {};
+  Array.from(el.childNodes).forEach((childNode) => {
+    if (
+      childNode.nodeName === 'TEMPLATE'
+      && childNode.getAttribute
+      && childNode.getAttribute('~slot')
+    ) {
+      const slotName = childNode.getAttribute('~slot');
+      this.slots[slotName] = childNode.content;
+    }
+  });
 
   // get template
   this.template = document.querySelector(`template#${componentName}`).innerHTML;
 
   // Mompute the final value of a path or properties from this object
   this.getPathValue = (baseObject, pathString, options = {}) => {
-
     const returnOptions = {
       quotes: false,
       stringfy: false,
@@ -62,12 +71,22 @@ function BaseComponent(el, componentName) {
     }
 
     // loop though path
-    let value = pathString.split('.').reduce(
-      (target, current) => current.endsWith(')')
-        ? callFunctionFromPath(target, current)
-        : typeof target[current] === 'function'
-          ? stringfyFunction(target[current])
-          : target[current],
+    let value = pathString.trim().split('.').reduce(
+      (target, current) => {
+        // get function return value
+        if (current.endsWith(')')) {
+          return callFunctionFromPath(target, current)
+        }
+        // get IIFE
+        if (typeof target[current] === 'function') {
+          return stringfyFunction(target[current])
+        }
+        // get evaluated Node
+        if (target[current].nodeType) {
+          return this.evaluateFragment(target[current])
+        }
+        return target[current]
+      },
     baseObject);
 
     if (returnOptions.stringfy && typeof value !== 'string') {
@@ -79,6 +98,8 @@ function BaseComponent(el, componentName) {
   }
 
   this.evaluateFragment= (fragment) => {
+    // protect original fragment from change
+    const cloneFragment = fragment.cloneNode(true);
     const evaluateNode = (node, LocalNodeVars = {}) => {
       const condition = node.getAttribute && node.getAttribute('~if');
       if (condition && !eval(condition)) {
@@ -107,9 +128,12 @@ function BaseComponent(el, componentName) {
       if (node.nodeType === 3) {
         const curlyMatches = [...node.data.matchAll(/{{(.*)}}/g)]
         curlyMatches.forEach(([expression , path]) => {
-          node.data = node.data.replace(expression,
-            this.getPathValue({...this, ...LocalNodeVars}, path)
-          )
+          const value = this.getPathValue({...this, ...LocalNodeVars}, path);
+          if (value.nodeType) {
+            node.parentNode.replaceChild(value, node);
+          } else {
+            node.data = node.data.replace(expression, value);
+          }
         })
       }
       // If element
@@ -131,15 +155,15 @@ function BaseComponent(el, componentName) {
       }
     }
 
-    Array.from(fragment.childNodes).forEach((node) => evaluateNode(node));
+    Array.from(cloneFragment.childNodes).forEach((node) => evaluateNode(node));
+
+    return cloneFragment;
   }
 
   this.render = () => {
     const fragment = document.createRange().createContextualFragment(this.template)
-    this.evaluateFragment(fragment)
-
     el.innerHTML = '';
-    el.appendChild(fragment);
+    el.appendChild(this.evaluateFragment(fragment));
     window.mountComponents();
   }
 }

@@ -3,6 +3,6 @@ script
 
 template#WordCard
   li.WordCount(:onclick=(`speak`))
-    template(~if='true') {{entry.word}}
+    template(~if='true') {{props.entry.word}}
     template(~if='false')
-      span {{entry.type}}
+      span {{props.entry.type}}
