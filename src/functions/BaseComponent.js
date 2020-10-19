@@ -1,3 +1,4 @@
+// TODO: add cleanup script
 function BaseComponent(el, componentName) {
   // Add mounted flag
   el.setAttribute('mounted', true)
@@ -24,6 +25,10 @@ function BaseComponent(el, componentName) {
       this[attribute.name.substring(1)] = this.parseAttribute(attribute.value);
     }
   })
+
+  // get children of the component
+  // filter `mounted` attribute to make sure to remount components
+  this.children = (el.innerHTML).replace(/mounted="true"/g, '')
 
   // get template
   this.template = document.querySelector(`template#${componentName}`).innerHTML;
@@ -96,13 +101,17 @@ window.registerComponent = (componentName) => {
 }
 
 window.mountComponents = () => {
+  console.log('mount')
   if (!window.registeredComponents) {
     window.registeredComponents = []
   }
   window.registeredComponents.forEach((componentName) => {
     document
+      // get all components that are not mounted
       .querySelectorAll(`${strToKababCase(componentName)}:not([mounted])`)
-      .forEach((el) => new window[componentName](el))
+      // double check that a component isn't mounted before creating new component
+      //(can happen when nested mountComponents exists)
+      .forEach((el) => !el.getAttribute('mounted') && new window[componentName](el))
   })
 }
 window.addEventListener('load', window.mountComponents);
