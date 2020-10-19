@@ -34,8 +34,13 @@ function BaseComponent(el, componentName) {
   this.template = document.querySelector(`template#${componentName}`).innerHTML;
 
   // Mompute the final value of a path or properties from this object
-  this.getPathValue = (baseObject, pathString, stripQuotes = false) => {
+  this.getPathValue = (baseObject, pathString, options = {}) => {
 
+    const returnOptions = {
+      quotes: false,
+      stringfy: false,
+      ...options
+    }
     // Used to get a function's return value
     const callFunctionFromPath = (baseObject, functionPath) => {
       const [functionName, paramsStr] = functionPath.slice(0, -1).split('(')
@@ -51,13 +56,13 @@ function BaseComponent(el, componentName) {
       let strFunc = `(${func.toString()})()`;
       const thisRefrences = [...strFunc.matchAll(/this((\n*\s*\t*\r*\.\w+(\(\w*\))?)+)/g)];
       thisRefrences.forEach(([expression , path]) => {
-        strFunc = strFunc.replace(expression, this.getPathValue(this, path.substring(1)))
+        strFunc = strFunc.replace(expression, this.getPathValue(this, path.substring(1), {quotes: true}))
       })
       return strFunc;
     }
 
     // loop though path
-    const value = pathString.split('.').reduce(
+    let value = pathString.split('.').reduce(
       (target, current) => current.endsWith(')')
         ? callFunctionFromPath(target, current)
         : typeof target[current] === 'function'
@@ -65,22 +70,46 @@ function BaseComponent(el, componentName) {
           : target[current],
     baseObject);
 
+    if (returnOptions.stringfy && typeof value !== 'string') {
+      value = JSON.stringify(value)
+    }
+
     // quates should always be used around strings unless this is an attribute inside DOM
-    return stripQuotes || isIIFE ? value : `'${value}'`;
+    return !returnOptions.quotes || isIIFE ? value : `'${value}'`;
   }
 
   this.evaluateFragment= (fragment) => {
-    const evaluateNode = (node) => {
+    const evaluateNode = (node, LocalNodeVars = {}) => {
       const condition = node.getAttribute && node.getAttribute('~if');
-      if (node.nodeName === 'TEMPLATE') console.log(node)
       if (condition && !eval(condition)) {
         return node.remove();
       }
+      if (node.getAttribute && node.getAttribute('~for')) {
+        let loopVal = this.getPathValue(this, node.getAttribute('~for'));
+        if (!Array.isArray(loopVal)) loopVal = [loopVal];
+        const loopFragment = document.createDocumentFragment();
+        loopVal.forEach((value, index) => {
+          const cloneNode = node.cloneNode(true);
+          cloneNode.removeAttribute('~for');
+          cloneNode.removeAttribute('~value');
+          cloneNode.removeAttribute('~index');
+          const localVars = {};
+          localVars[node.getAttribute('~value') || 'value'] = value;
+          localVars[node.getAttribute('~index') || 'index'] = index;
+          evaluateNode(cloneNode, {...LocalNodeVars, ...localVars})
+          loopFragment.appendChild(cloneNode);
+        });
+        node.parentNode.replaceChild(loopFragment, node)
+        return;
+      }
+
       // If text node
       if (node.nodeType === 3) {
         const curlyMatches = [...node.data.matchAll(/{{(.*)}}/g)]
         curlyMatches.forEach(([expression , path]) => {
-          node.data = node.data.replace(expression, this.getPathValue(this, path, true))
+          node.data = node.data.replace(expression,
+            this.getPathValue({...this, ...LocalNodeVars}, path)
+          )
         })
       }
       // If element
@@ -88,7 +117,7 @@ function BaseComponent(el, componentName) {
         Object.values(node.attributes).forEach((attribute) => {
           if (attribute.name[0] === ':') {
             const pureAttrName = attribute.name.substring(1);
-            const value = this.getPathValue(this, attribute.value, true)
+            const value = this.getPathValue({...this, ...LocalNodeVars}, attribute.value, { stringfy:true })
             node.removeAttribute(attribute.name)
             node.setAttribute(pureAttrName, value)
           }

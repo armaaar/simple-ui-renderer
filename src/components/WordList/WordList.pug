@@ -1,4 +1,6 @@
-mixin WordList(list)
+script
+  include WordList.js
+
+template#WordList
   ul
-    each entry in list
-      word-card(:entry=(entry))
+    word-card(~for='list')(~value='entry')(::entry='entry')

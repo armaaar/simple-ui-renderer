@@ -17,4 +17,4 @@ html
     each lecture, index in lectures
       div
         h1 Lecture #{index + 1}
-        +WordList(lecture)
+        word-list(:list=(lecture))
