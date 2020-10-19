@@ -8,3 +8,5 @@ function WordCard(el) {
 
   this.render();
 }
+
+window.registerComponent('WordCard');

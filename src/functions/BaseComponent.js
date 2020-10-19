@@ -2,11 +2,8 @@ function BaseComponent(el, componentName) {
   // Add mounted flag
   el.setAttribute('mounted', true)
 
-  // Add component to registered components list
-  if (!window.registeredComponents) {
-    window.registeredComponents = []
-  }
-  window.registeredComponents.push(componentName);
+  // Add component to registered components list if not exist
+  window.registerComponent(componentName);
 
   // Disable parent elements styles
   el.style.display = 'unset';
@@ -80,15 +77,23 @@ function BaseComponent(el, componentName) {
   }
 }
 
+window.registerComponent = (componentName) => {
+  if (!window.registeredComponents) {
+    window.registeredComponents = []
+  }
+  if (!window.registeredComponents.includes(componentName)) {
+    window.registeredComponents.push(componentName);
+  }
+}
+
 window.mountComponents = () => {
   if (!window.registeredComponents) {
     window.registeredComponents = []
   }
   window.registeredComponents.forEach((componentName) => {
     document
-      .querySelectorAll(`${strToKababCase(componentName)}word-card:not([mounted])`)
+      .querySelectorAll(`${strToKababCase(componentName)}:not([mounted])`)
       .forEach((el) => new window[componentName](el))
   })
 }
-
 window.addEventListener('load', window.mountComponents);
