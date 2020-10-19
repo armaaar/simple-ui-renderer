@@ -2,4 +2,7 @@ script
   include WordCard.js
 
 template#WordCard
-  li.WordCount(:onclick=(`speak`)) {{entry.word}}
+  li.WordCount(:onclick=(`speak`))
+    template(~if='true') {{entry.word}}
+    template(~if='false')
+      span {{entry.type}}

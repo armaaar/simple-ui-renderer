@@ -71,6 +71,11 @@ function BaseComponent(el, componentName) {
 
   this.evaluateFragment= (fragment) => {
     const evaluateNode = (node) => {
+      const condition = node.getAttribute && node.getAttribute('~if');
+      if (node.nodeName === 'TEMPLATE') console.log(node)
+      if (condition && !eval(condition)) {
+        return node.remove();
+      }
       // If text node
       if (node.nodeType === 3) {
         const curlyMatches = [...node.data.matchAll(/{{(.*)}}/g)]
@@ -89,10 +94,15 @@ function BaseComponent(el, componentName) {
           }
         })
       }
-      node.childNodes.forEach((childNode) => evaluateNode(childNode))
+      if (node.nodeName === 'TEMPLATE') {
+        node.content.childNodes.forEach((childNode) => evaluateNode(childNode))
+        node.outerHTML = node.innerHTML
+      } else {
+        Array.from(node.childNodes).forEach((childNode) => evaluateNode(childNode))
+      }
     }
 
-    fragment.childNodes.forEach((node) => evaluateNode(node));
+    Array.from(fragment.childNodes).forEach((node) => evaluateNode(node));
   }
 
   this.render = () => {
