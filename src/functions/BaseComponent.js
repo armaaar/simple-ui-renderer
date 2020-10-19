@@ -101,7 +101,6 @@ window.registerComponent = (componentName) => {
 }
 
 window.mountComponents = () => {
-  console.log('mount')
   if (!window.registeredComponents) {
     window.registeredComponents = []
   }
