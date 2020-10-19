@@ -69,24 +69,38 @@ function BaseComponent(el, componentName) {
     return stripQuotes || isIIFE ? value : `'${value}'`;
   }
 
-  // Manipulate template string to replace placeholders with actual data
-  this.evaluateTemplate = () => {
-    let evaluation = this.template;
-    // evaluate placeholders
-    const curlyMatches = [...evaluation.matchAll(/{{(.*)}}/g)]
-    curlyMatches.forEach(([expression , path]) => {
-      evaluation = evaluation.replace(expression, this.getPathValue(this, path, true))
-    })
-    // evaluate attribute binding
-    const columnMatches = [...evaluation.matchAll(/:(\w+)="(.*)"/g)]
-    columnMatches.forEach(([expression , attribute, path]) => {
-      evaluation = evaluation.replace(expression, `${attribute}="${this.getPathValue(this, path)}"`)
-    })
-    return evaluation;
+  this.evaluateFragment= (fragment) => {
+    const evaluateNode = (node) => {
+      // If text node
+      if (node.nodeType === 3) {
+        const curlyMatches = [...node.data.matchAll(/{{(.*)}}/g)]
+        curlyMatches.forEach(([expression , path]) => {
+          node.data = node.data.replace(expression, this.getPathValue(this, path, true))
+        })
+      }
+      // If element
+      else if (node.nodeType === 1) {
+        Object.values(node.attributes).forEach((attribute) => {
+          if (attribute.name[0] === ':') {
+            const pureAttrName = attribute.name.substring(1);
+            const value = this.getPathValue(this, attribute.value, true)
+            node.removeAttribute(attribute.name)
+            node.setAttribute(pureAttrName, value)
+          }
+        })
+      }
+      node.childNodes.forEach((childNode) => evaluateNode(childNode))
+    }
+
+    fragment.childNodes.forEach((node) => evaluateNode(node));
   }
 
   this.render = () => {
-    el.innerHTML = this.evaluateTemplate();
+    const fragment = document.createRange().createContextualFragment(this.template)
+    this.evaluateFragment(fragment)
+
+    el.innerHTML = '';
+    el.appendChild(fragment);
     window.mountComponents();
   }
 }
