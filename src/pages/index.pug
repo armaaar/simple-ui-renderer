@@ -16,7 +16,7 @@ html
     include ../../tmp/components.pug
     each lecture, index in lectures
       div
-        word-list(:list=(lecture))
+        word-list(:list=(lecture))(:append="ho")
           template(~slot="headline")
             h1 Lecture #{index + 1}
 

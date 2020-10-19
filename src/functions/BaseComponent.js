@@ -100,11 +100,13 @@ function BaseComponent(el, componentName) {
   this.evaluateFragment= (fragment) => {
     // protect original fragment from change
     const cloneFragment = fragment.cloneNode(true);
+
     const evaluateNode = (node, LocalNodeVars = {}) => {
       const condition = node.getAttribute && node.getAttribute('~if');
       if (condition && !eval(condition)) {
         return node.remove();
       }
+
       if (node.getAttribute && node.getAttribute('~for')) {
         let loopVal = this.getPathValue(this, node.getAttribute('~for'));
         if (!Array.isArray(loopVal)) loopVal = [loopVal];
@@ -126,7 +128,7 @@ function BaseComponent(el, componentName) {
 
       // If text node
       if (node.nodeType === 3) {
-        const curlyMatches = [...node.data.matchAll(/{{(.*)}}/g)]
+        const curlyMatches = [...node.data.matchAll(/{{\s*([\w\._]*)\s*}}/g)]
         curlyMatches.forEach(([expression , path]) => {
           const value = this.getPathValue({...this, ...LocalNodeVars}, path);
           if (value.nodeType) {
@@ -147,9 +149,15 @@ function BaseComponent(el, componentName) {
           }
         })
       }
+
       if (node.nodeName === 'TEMPLATE') {
-        node.content.childNodes.forEach((childNode) => evaluateNode(childNode))
-        node.outerHTML = node.innerHTML
+        // slot for a child component
+        if (node.getAttribute('~slot')) {
+          Array.from(node.content.childNodes).forEach((childNode) => evaluateNode(childNode))
+        } else {
+          node.content.childNodes.forEach((childNode) => evaluateNode(childNode))
+          node.outerHTML = node.innerHTML
+        }
       } else {
         Array.from(node.childNodes).forEach((childNode) => evaluateNode(childNode))
       }
