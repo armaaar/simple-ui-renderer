@@ -4,6 +4,7 @@ script
 template#WordList
   div {{ slots.headline }}
     ul
-      word-card(~for='props.list')(~value='entry')(::entry='entry')
-        template(~slot="text") {{props.append}}
+      template(~for='props.list')(~value='entry')
+        word-card(::entry='entry')
+          template(~slot="text") {{props.append}}
 
