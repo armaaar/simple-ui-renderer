@@ -9,9 +9,10 @@ html
     include ../../tmp/styles.css
   body
     script
-      include ../functions/BaseComponent.js
+      include ../componentsCore/BaseComponent.js
+      include ../componentsCore/compileCode.js
+      include ../componentsCore/toKababCase.js
       include ../functions/textToSpeach.js
-      include ../functions/toKababCase.js
 
     include ../../tmp/components.pug
     each lecture, index in lectures
