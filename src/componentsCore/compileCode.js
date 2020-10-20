@@ -1,6 +1,6 @@
 const sandboxProxies = new WeakMap()
 
-function compileCode (codeToCompile, sandbox) {
+function compileCode (codeToCompile, sandbox = {}) {
   const src = `with (sandbox) { return ${codeToCompile}}`
   const code = new Function('sandbox', src)
 

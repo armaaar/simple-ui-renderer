@@ -100,7 +100,7 @@ function BaseComponent(el, componentName) {
   this.evaluateNode = (node, LocalNodeVars = {}) => {
     const condition = node.getAttribute && node.getAttribute('~if');
     if (condition) {
-      if (!eval(condition)) {
+      if (!compileCode(condition, {...this, ...LocalNodeVars})) {
         return node.remove();
       }
       node.removeAttribute('~if');
@@ -132,9 +132,9 @@ function BaseComponent(el, componentName) {
 
     // If text node
     if (node.nodeType === 3) {
-      const curlyMatches = [...node.data.matchAll(/{{\s*([\w\._]*)\s*}}/g)]
+      const curlyMatches = [...node.data.matchAll(/{{([^(}})]*)}}/g)]
       curlyMatches.forEach(([expression , path]) => {
-        const value = this.getPathValue({...this, ...LocalNodeVars}, path);
+        const value = compileCode(path, {...this, ...LocalNodeVars});
         if (value.nodeType) { // inline slots
           node.parentNode.replaceChild(value, node);
         } else {
@@ -148,7 +148,7 @@ function BaseComponent(el, componentName) {
         if (attribute.name[0] === ':') {
           node.removeAttribute(attribute.name)
           if (attribute.name === ':slot') { // is slot
-            const value = this.getPathValue({...this, ...LocalNodeVars}, attribute.value)
+            const value = this.getPathValue(this.slots, attribute.value)
             if (node.nodeName === 'TEMPLATE') {
               node.content.appendChild(value)
             } else {
