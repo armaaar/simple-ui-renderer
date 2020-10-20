@@ -97,13 +97,51 @@ function BaseComponent(el, componentName) {
     return !returnOptions.quotes || isIIFE ? value : `'${value}'`;
   }
 
+  let previousCondition = null;
   this.evaluateNode = (node, LocalNodeVars = {}) => {
-    const condition = node.getAttribute && node.getAttribute('~if');
+    const condition = node.getAttribute && (
+      node.getAttribute('~if')
+      || node.getAttribute('~elif')
+      || node.hasAttribute('~else')
+    );
     if (condition) {
-      if (!compileCode(condition, {...this, ...LocalNodeVars})) {
-        return node.remove();
+      if (node.getAttribute('~if')) {
+        // set previousCondition so later tags can access it
+        previousCondition = Boolean(compileCode(condition, {...this, ...LocalNodeVars}));
+        // If the statement is false
+        if (!previousCondition) {
+          // don't render
+          return node.remove();
+        }
+      } else if (node.getAttribute('~elif')) {
+        // if the previous if statement was true
+        // or the current statement is false
+        if (
+          previousCondition
+          || previousCondition === null
+          || !compileCode(condition, {...this, ...LocalNodeVars})
+        ) {
+          return node.remove();
+        }
+        // else, set previous condition as true
+        previousCondition = true;
+      } else {
+        // if the previous if statement was true
+        if (previousCondition || previousCondition === null) {
+          // don't render
+          return node.remove();
+        }
+        previousCondition = null;
       }
       node.removeAttribute('~if');
+      node.removeAttribute('~elif');
+      node.removeAttribute('~else');
+      if (
+        !node.nextElementSibling.getAttribute('~elif')
+         && !node.nextElementSibling.getAttribute('~else')
+      ) {
+        previousCondition = null;
+      }
     }
 
     if (node.getAttribute && node.getAttribute('~for')) {

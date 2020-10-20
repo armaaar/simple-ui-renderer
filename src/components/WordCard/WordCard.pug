@@ -3,5 +3,8 @@ script
 
 template#WordCard
   li.WordCount(:onclick=(`speak`))
-    template(~if='true') {{props.entry.word}} -- {{props.entry.type}} --
+    template(~if='props.entry.subType') {{props.entry.subType}} --a
+    template(~elif='false') {{props.entry.arabic}} --x
+    template(~elif='props.entry.type') {{props.entry.type}} --s
+    template(~else) {{props.entry.word}} --d
     template(:slot='text')
