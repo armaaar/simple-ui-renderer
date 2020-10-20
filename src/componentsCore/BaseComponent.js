@@ -197,6 +197,13 @@ function BaseComponent(el, componentName) {
             const value = this.getPathValue({...this, ...LocalNodeVars}, attribute.value, { stringfy:true })
             node.setAttribute(pureAttrName, value)
           }
+        } else if (attribute.name[0] === '@') {
+          node.removeAttribute(attribute.name)
+          const pureEventName = attribute.name.substring(1);
+          const callBack = compileCode(attribute.value, {...this, ...LocalNodeVars});
+          if (typeof callBack === 'function') {
+            node.addEventListener(pureEventName, callBack);
+          }
         }
       })
     }
