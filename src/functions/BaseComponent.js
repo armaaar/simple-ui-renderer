@@ -112,7 +112,6 @@ function BaseComponent(el, componentName) {
       const nodesToClone = node.nodeName === 'TEMPLATE'
         ? Array.from(node.content.childNodes)
         : [node];
-      console.log(nodesToClone);
       const loopFragment = document.createDocumentFragment();
       loopVal.forEach((value, index) => {
         nodesToClone.forEach((nodeToClone) => {
@@ -136,7 +135,7 @@ function BaseComponent(el, componentName) {
       const curlyMatches = [...node.data.matchAll(/{{\s*([\w\._]*)\s*}}/g)]
       curlyMatches.forEach(([expression , path]) => {
         const value = this.getPathValue({...this, ...LocalNodeVars}, path);
-        if (value.nodeType) {
+        if (value.nodeType) { // inline slots
           node.parentNode.replaceChild(value, node);
         } else {
           node.data = node.data.replace(expression, value);
@@ -147,17 +146,26 @@ function BaseComponent(el, componentName) {
     else if (node.nodeType === 1) {
       Object.values(node.attributes).forEach((attribute) => {
         if (attribute.name[0] === ':') {
-          const pureAttrName = attribute.name.substring(1);
-          const value = this.getPathValue({...this, ...LocalNodeVars}, attribute.value, { stringfy:true })
           node.removeAttribute(attribute.name)
-          node.setAttribute(pureAttrName, value)
+          if (attribute.name === ':slot') { // is slot
+            const value = this.getPathValue({...this, ...LocalNodeVars}, attribute.value)
+            if (node.nodeName === 'TEMPLATE') {
+              node.content.appendChild(value)
+            } else {
+              node.appendChild(value)
+            }
+          } else {
+            const pureAttrName = attribute.name.substring(1);
+            const value = this.getPathValue({...this, ...LocalNodeVars}, attribute.value, { stringfy:true })
+            node.setAttribute(pureAttrName, value)
+          }
         }
       })
     }
 
     if (node.nodeName === 'TEMPLATE') {
-        this.evaluateFragment(node.content, false, LocalNodeVars);
-        // slot for a child component
+      this.evaluateFragment(node.content, false, LocalNodeVars);
+      // slot for a child component
       if (!node.getAttribute('~slot')) {
         node.outerHTML = node.innerHTML
       }
