@@ -81,9 +81,9 @@ function BaseComponent(el, componentName) {
         if (typeof target[current] === 'function') {
           return stringfyFunction(target[current])
         }
-        // get evaluated Node
-        if (target[current].nodeType) {
-          return this.evaluateFragment(target[current])
+        // get evaluated Fragments
+        if (target[current].nodeType === 11) {
+          return this.evaluateFragment(target[current], true)
         }
         return target[current]
       },
@@ -97,73 +97,76 @@ function BaseComponent(el, componentName) {
     return !returnOptions.quotes || isIIFE ? value : `'${value}'`;
   }
 
-  this.evaluateFragment= (fragment) => {
-    // protect original fragment from change
-    const cloneFragment = fragment.cloneNode(true);
-
-    const evaluateNode = (node, LocalNodeVars = {}) => {
-      const condition = node.getAttribute && node.getAttribute('~if');
-      if (condition && !eval(condition)) {
+  this.evaluateNode = (node, LocalNodeVars = {}) => {
+    const condition = node.getAttribute && node.getAttribute('~if');
+    if (condition) {
+      if (!eval(condition)) {
         return node.remove();
       }
-
-      if (node.getAttribute && node.getAttribute('~for')) {
-        let loopVal = this.getPathValue(this, node.getAttribute('~for'));
-        if (!Array.isArray(loopVal)) loopVal = [loopVal];
-        const loopFragment = document.createDocumentFragment();
-        loopVal.forEach((value, index) => {
-          const cloneNode = node.cloneNode(true);
-          cloneNode.removeAttribute('~for');
-          cloneNode.removeAttribute('~value');
-          cloneNode.removeAttribute('~index');
-          const localVars = {};
-          localVars[node.getAttribute('~value') || 'value'] = value;
-          localVars[node.getAttribute('~index') || 'index'] = index;
-          evaluateNode(cloneNode, {...LocalNodeVars, ...localVars})
-          loopFragment.appendChild(cloneNode);
-        });
-        node.parentNode.replaceChild(loopFragment, node)
-        return;
-      }
-
-      // If text node
-      if (node.nodeType === 3) {
-        const curlyMatches = [...node.data.matchAll(/{{\s*([\w\._]*)\s*}}/g)]
-        curlyMatches.forEach(([expression , path]) => {
-          const value = this.getPathValue({...this, ...LocalNodeVars}, path);
-          if (value.nodeType) {
-            node.parentNode.replaceChild(value, node);
-          } else {
-            node.data = node.data.replace(expression, value);
-          }
-        })
-      }
-      // If element
-      else if (node.nodeType === 1) {
-        Object.values(node.attributes).forEach((attribute) => {
-          if (attribute.name[0] === ':') {
-            const pureAttrName = attribute.name.substring(1);
-            const value = this.getPathValue({...this, ...LocalNodeVars}, attribute.value, { stringfy:true })
-            node.removeAttribute(attribute.name)
-            node.setAttribute(pureAttrName, value)
-          }
-        })
-      }
-
-      if (node.nodeName === 'TEMPLATE') {
-        // slot for a child component
-        if (node.getAttribute('~slot')) {
-          Array.from(node.content.childNodes).forEach((childNode) => evaluateNode(childNode))
-        } else {
-          node.content.childNodes.forEach((childNode) => evaluateNode(childNode))
-          node.outerHTML = node.innerHTML
-        }
-      } else {
-        Array.from(node.childNodes).forEach((childNode) => evaluateNode(childNode))
-      }
+      node.removeAttribute('~if');
     }
 
-    Array.from(cloneFragment.childNodes).forEach((node) => evaluateNode(node));
+    if (node.getAttribute && node.getAttribute('~for')) {
+      let loopVal = this.getPathValue(this, node.getAttribute('~for'));
+      if (!Array.isArray(loopVal)) loopVal = [loopVal];
+      const loopFragment = document.createDocumentFragment();
+      loopVal.forEach((value, index) => {
+        const cloneNode = node.cloneNode(true);
+        cloneNode.removeAttribute('~for');
+        cloneNode.removeAttribute('~value');
+        cloneNode.removeAttribute('~index');
+        const localVars = {};
+        localVars[node.getAttribute('~value') || 'value'] = value;
+        localVars[node.getAttribute('~index') || 'index'] = index;
+        this.evaluateNode(cloneNode, {...LocalNodeVars, ...localVars})
+        loopFragment.appendChild(cloneNode);
+      });
+      node.parentNode.replaceChild(loopFragment, node)
+      return;
+    }
+
+    // If text node
+    if (node.nodeType === 3) {
+      const curlyMatches = [...node.data.matchAll(/{{\s*([\w\._]*)\s*}}/g)]
+      curlyMatches.forEach(([expression , path]) => {
+        const value = this.getPathValue({...this, ...LocalNodeVars}, path);
+        if (value.nodeType) {
+          node.parentNode.replaceChild(value, node);
+        } else {
+          node.data = node.data.replace(expression, value);
+        }
+      })
+    }
+    // If element
+    else if (node.nodeType === 1) {
+      Object.values(node.attributes).forEach((attribute) => {
+        if (attribute.name[0] === ':') {
+          const pureAttrName = attribute.name.substring(1);
+          const value = this.getPathValue({...this, ...LocalNodeVars}, attribute.value, { stringfy:true })
+          node.removeAttribute(attribute.name)
+          node.setAttribute(pureAttrName, value)
+        }
+      })
+    }
+
+    if (node.nodeName === 'TEMPLATE') {
+      // slot for a child component
+      if (node.getAttribute('~slot')) {
+        this.evaluateFragment(node.content);
+      } else {
+        node.content.childNodes.forEach((childNode) => this.evaluateNode(childNode))
+        node.outerHTML = node.innerHTML
+      }
+    } else {
+      Array.from(node.childNodes).forEach((childNode) => this.evaluateNode(childNode))
+    }
+  }
+
+  this.evaluateFragment= (fragment, clone = false) => {
+    // protect original fragment from change
+    const cloneFragment = clone && fragment.cloneNode(true) || fragment;
+
+    Array.from(cloneFragment.childNodes).forEach((node) => this.evaluateNode(node));
 
     return cloneFragment;
   }
