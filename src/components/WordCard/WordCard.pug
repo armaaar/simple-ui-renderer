@@ -2,4 +2,8 @@ script
   include WordCard.js
 
 template#WordCard
-  li.WordCount(:onclick=(`speak`)) {{props.entry.word}}
+  .word-card
+    .word-card__type
+    span {{props.entry.type}}
+    template(~if='props.entry.subType') ({{props.entry.subType}})
+

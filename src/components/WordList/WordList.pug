@@ -2,7 +2,6 @@ script
   include WordList.js
 
 template#WordList
-  ul
-    template(~for='props.list')(~value='entry')
-      word-card(::entry='entry')
+  template(~for='props.list')(~value='entry')
+    word-card(::entry='entry')
 

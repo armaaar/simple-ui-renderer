@@ -23,9 +23,9 @@ function swallowError (error) {
 }
 
 task('sass', function () {
-  return src(['src/styles/styles.sass', 'src/components/**/*.sass'])
+  return src(['src/styles/styles.sass', 'src/components/**/*.sass'], { base: 'src/styles' })
+    .pipe(concat('styles.sass'))
     .pipe(sass().on('error', sass.logError))
-    .pipe(concat('styles.css'))
     .pipe(dest('tmp'));
 });
 
