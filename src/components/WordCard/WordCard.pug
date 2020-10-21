@@ -2,9 +2,4 @@ script
   include WordCard.js
 
 template#WordCard
-  li.WordCount(@click=(`speak`))
-    template(~if='props.entry.subType') {{props.entry.subType}} --a
-    template(~elif='false') {{props.entry.arabic}} --x
-    template(~elif='props.entry.type') {{props.entry.type}} --s
-    template(~else) {{props.entry.word}} --d
-    template(:slot='text')
+  li.WordCount(:onclick=(`speak`)) {{props.entry.word}}

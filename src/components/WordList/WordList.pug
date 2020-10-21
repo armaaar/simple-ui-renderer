@@ -2,9 +2,7 @@ script
   include WordList.js
 
 template#WordList
-  div {{ slots.headline }}
-    ul
-      template(~for='props.list')(~value='entry')
-        word-card(::entry='entry')
-          template(~slot="text") {{props.append}}
+  ul
+    template(~for='props.list')(~value='entry')
+      word-card(::entry='entry')
 
