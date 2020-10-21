@@ -15,6 +15,14 @@ template#WordCard
         li(~for='props.entry.variations')
           span.word-card__word.word-card__word--small.mb-10(@click='(ev) => speak(ev, value)') {{value}}
 
+    .word-card__section(~if='props.structure.languages')
+      h2.word-card__section__title Translations
+      table.word-card__aligned-list
+        tbody
+          tr(~for='props.structure.languages')(~value='language')
+            th.word-card__aligned-list__head {{language}}
+            td.word-card__aligned-list__data {{props.entry[language]}}
+
 
 
 

@@ -6,9 +6,10 @@ block content
   -
     const { readJson } = require('./src/utils/readJson.js')
     let { lectures } = readJson('./data/words.json');
+    let structure = readJson('./data/structure.json');
 
   each lecture, index in lectures
     div
       h1 Lecture #{index + 1}
-      word-list(:list=(lecture))
+      word-list(:list=(lecture))(:structure=(structure))
 

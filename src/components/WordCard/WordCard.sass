@@ -33,6 +33,23 @@
 
   &__section
     margin-bottom: 10px
+    &:last-child
+      margin-bottom: 0
     &__title
+      text-transform: capitalize;
       font-size: $font-size-m
+      margin-bottom: 10px
+
+  &__aligned-list
+    width: auto
+    text-align: left
+    &__head
+      text-transform: capitalize;
+      padding-bottom: 10px
+      padding-right: 20px
+      &::before
+        content: '\2022'
+        padding-right: 10px
+    &__data
+      padding-bottom: 10px
 
