@@ -17,6 +17,11 @@ const concat = require('gulp-concat');
 
 sass.compiler = require('node-sass');
 
+function swallowError (error) {
+  console.log(error.toString())
+  this.emit('end')
+}
+
 task('sass', function () {
   return src(['src/styles/styles.sass', 'src/components/**/*.sass'])
     .pipe(sass().on('error', sass.logError))
@@ -40,6 +45,7 @@ task('pug', function (cb) {
   src('src/pages/*.pug')
     .pipe(data(function (file) { return { require: require }; }))
     .pipe(pug())
+    .on('error', swallowError)
     .pipe(dest('dist'))
     .pipe(browserSync.stream());
   cb()
