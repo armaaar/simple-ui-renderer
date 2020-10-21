@@ -1,22 +1,14 @@
--
-  const { readJson } = require('./src/utils/readJson.js')
-  let { lectures } = readJson('./data/words.json');
-doctype html
-html
-  head
-    title Learning German
-  style
-    include ../../tmp/styles.css
-  body
-    script
-      include ../componentsCore/BaseComponent.js
-      include ../componentsCore/compileCode.js
-      include ../componentsCore/toKababCase.js
-      include ../functions/textToSpeach.js
+extends ../layouts/main.pug
 
-    include ../../tmp/components.pug
-    each lecture, index in lectures
-      div
-        h1 Lecture #{index + 1}
-        word-list(:list=(lecture))
+block title
+  = 'Learning German'
+block content
+  -
+    const { readJson } = require('./src/utils/readJson.js')
+    let { lectures } = readJson('./data/words.json');
+
+  each lecture, index in lectures
+    div
+      h1 Lecture #{index + 1}
+      word-list(:list=(lecture))
 

@@ -1,0 +1,18 @@
+doctype html
+html
+  head
+    title
+      block title
+  style
+    include ../../tmp/styles.css
+  body
+    script
+      include ../componentsCore/BaseComponent.js
+      include ../componentsCore/compileCode.js
+      include ../componentsCore/toKababCase.js
+      include ../functions/textToSpeach.js
+
+    include ../../tmp/components.pug
+
+    block content
+
