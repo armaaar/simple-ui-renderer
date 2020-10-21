@@ -3,7 +3,18 @@ script
 
 template#WordCard
   .word-card
-    .word-card__type
-    span {{props.entry.type}}
-    template(~if='props.entry.subType') ({{props.entry.subType}})
+    .word-card__types
+      span.word-card__type {{props.entry.type}}
+      span.word-card__subtype(~if='props.entry.subType') ({{props.entry.subType}})
+
+    h1.word-card__word.mb-20(@click='speak') {{props.entry.word}}
+
+    .word-card__section(~if='props.entry.variations')
+      h2.word-card__section__title Variations
+      ul
+        li(~for='props.entry.variations')
+          span.word-card__word.word-card__word--small.mb-10(@click='(ev) => speak(ev, value)') {{value}}
+
+
+
 

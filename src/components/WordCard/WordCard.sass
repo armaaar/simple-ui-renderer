@@ -5,3 +5,34 @@
   padding: 20px
   border: 1px solid $text-color
   margin-bottom: 30px
+
+  &__types
+    display: block
+    font-size: $font-size-s
+    margin-bottom: 10px
+
+  &__subtype
+    padding-left: 10px
+    font-style: italic
+
+  &__word
+    font-size: $font-size-l
+    line-height: $font-size-l
+    font-weight: 400
+    &::before
+      content: '\1F508'
+      font-size: $font-size-m
+      line-height: $font-size-l
+      vertical-align: bottom
+      padding-right: 10px
+    &--small
+      font-size: $font-size-m
+      &::before
+        font-size: $font-size-s
+
+
+  &__section
+    margin-bottom: 10px
+    &__title
+      font-size: $font-size-m
+
