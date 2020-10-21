@@ -3,43 +3,44 @@
     [
       {
         "word": "Ja",
-        "type": "affirmatives",
+        "type": "affirmative",
         "english": "yes",
         "arabic": "نعم"
       },
       {
         "word": "Nein",
-        "type": "affirmatives",
+        "type": "affirmative",
         "english": "No",
         "arabic": "لا"
       },
       {
         "word": "vielleicht",
-        "type": "affirmatives",
+        "type": "affirmative",
         "english": "Maybe",
         "arabic": "ربما"
       },
       {
         "word": "das Auto",
-        "type": "neutral",
+        "type": "word",
+        "subType": "neutral",
         "english": "Car",
         "arabic": "سيارة"
       },
       {
         "word": "Wo",
-        "type": "interrogatives",
+        "type": "interrogative",
         "english": "Where",
         "arabic": "أين"
       },
       {
         "word": "Wo ist das Auto",
-        "type": "questions",
+        "type": "question",
         "english": "Where is the car?",
         "arabic": "أين السيارة؟"
       },
       {
         "word": "Ich",
-        "type": "pronouns",
+        "type": "pronoun",
         "english": "I",
         "arabic": "أنا"
       },
@@ -52,7 +53,7 @@
       },
       {
         "word": "Ich lerne Deutsch.",
-        "type": "sentences",
+        "type": "sentence",
         "english": "I learn German / I'm learning German",
         "arabic": "أنا أتعلم الألمانية"
       },
@@ -63,7 +64,7 @@
           "lernst",
           "lernt"
         ],
-        "type": "verbs",
+        "type": "verb",
         "english": "Learn",
         "arabic": "يتعلم"
       },
@@ -84,19 +85,19 @@
       {
         "word": "im",
         "more": "im => in dem",
-        "type": "prepositions",
+        "type": "preposition",
         "english": "in the",
         "arabic": "في ال"
       },
       {
         "word": "Der Mann ist im Auto",
-        "type": "sentences",
+        "type": "sentence",
         "english": "The man is in the car",
         "arabic": "الرجل في السيارة"
       },
       {
         "word": "Die Frau ist im Auto",
-        "type": "sentences",
+        "type": "sentence",
         "english": "The woman is in the car",
         "arabic": "المرأة في السيارة"
       }
