@@ -136,10 +136,10 @@ function BaseComponent(el, componentName) {
       node.removeAttribute('~if');
       node.removeAttribute('~elif');
       node.removeAttribute('~else');
-      if (
+      if (!node.nextElementSiblin || (
         !node.nextElementSibling.getAttribute('~elif')
-         && !node.nextElementSibling.getAttribute('~else')
-      ) {
+        && !node.nextElementSibling.getAttribute('~else')
+      )) {
         previousCondition = null;
       }
     }
