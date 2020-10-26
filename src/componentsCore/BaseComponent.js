@@ -160,11 +160,11 @@ function BaseComponent(el, componentName) {
           const localVars = {};
           localVars[node.getAttribute('~value') || 'value'] = value;
           localVars[node.getAttribute('~index') || 'index'] = index;
-          this.evaluateNode(cloneNode, {...LocalNodeVars, ...localVars})
           loopFragment.appendChild(cloneNode);
+          this.evaluateNode(cloneNode, {...LocalNodeVars, ...localVars})
         });
       });
-      node.parentNode.replaceChild(loopFragment, node)
+      node.replaceWith(loopFragment);
       return;
     }
 
@@ -174,7 +174,7 @@ function BaseComponent(el, componentName) {
       curlyMatches.forEach(([expression , path]) => {
         const value = compileCode(path, {...this, ...LocalNodeVars});
         if (value.nodeType) { // inline slots
-          node.parentNode.replaceChild(value, node);
+          node.replaceWith(value);
         } else {
           node.data = node.data.replace(expression, value);
         }
