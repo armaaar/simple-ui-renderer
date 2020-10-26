@@ -1,7 +1,0 @@
-script
-  include WordList.js
-
-template#WordList
-  template(~for='props.list')(~value='entry')
-    word-card(::entry='entry')(::structure='props.structure')
-

@@ -4,7 +4,11 @@ script
 template#CourseSelector
   .course-selector
     ul.course-selector__list
-      li.course-selector__list__item(~for='props.courses')(~value='course')(@click='() => selectCourse(course)') {{course}}
+      li.course-selector__list__item(
+        ~for='props.courses',
+        ~value='course',
+        @click='() => selectCourse(course)'
+      ) {{course}}
 
 
 
