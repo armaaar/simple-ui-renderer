@@ -4,6 +4,7 @@ function WordCard(el) {
   // define state
   this.speak = () => {
     textToSpeach(this.props.entry.word)
+    this.emit('speak', this.props.entry.word)
   }
 
   this.render();

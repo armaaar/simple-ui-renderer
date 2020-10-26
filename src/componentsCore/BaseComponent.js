@@ -219,13 +219,17 @@ function BaseComponent(el, componentName) {
     }
   }
 
-  this.evaluateFragment= (fragment, clone = false, LocalNodeVars = {}) => {
+  this.evaluateFragment = (fragment, clone = false, LocalNodeVars = {}) => {
     // protect original fragment from change
     const cloneFragment = clone && fragment.cloneNode(true) || fragment;
 
     Array.from(cloneFragment.childNodes).forEach((node) => this.evaluateNode(node, LocalNodeVars));
 
     return cloneFragment;
+  }
+
+  this.emit = (eventName, parametersObj) => {
+    el.dispatchEvent(new CustomEvent(eventName, {  bubbles: true, detail: parametersObj }))
   }
 
   this.render = () => {
