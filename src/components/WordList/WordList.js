@@ -1,5 +1,5 @@
 function WordList(el) {
-  BaseComponent.call(this, el, 'WordList')
+  BaseComponent.call(this, el, 'WordList');
 
   this.render();
 }
