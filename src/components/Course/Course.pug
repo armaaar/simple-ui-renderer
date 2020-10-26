@@ -1,0 +1,9 @@
+script
+  include Course.js
+
+template#Course
+  .course
+    course-selector(::courses="props.structure.courses")(@select="selectCourse")
+    div.course__lecture(~for="lectures")(~value="lecture")
+      h1.course__lecture__title Lecture {{lecture.index}}
+      word-list(::list="lecture.words")(::structure="props.structure")

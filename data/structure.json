@@ -26,5 +26,9 @@
   "exampleTypes": [
       "questions",
       "sentences"
+  ],
+  "courses": [
+    "lingoni",
+    "dfa"
   ]
 }
