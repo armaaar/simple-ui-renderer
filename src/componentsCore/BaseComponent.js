@@ -233,6 +233,7 @@ function BaseComponent(el, componentName) {
   }
 
   this.render = () => {
+    if (typeof this.prerender === 'function') this.prerender();
     const fragment = document.createRange().createContextualFragment(this.template)
     el.innerHTML = '';
     el.appendChild(this.evaluateFragment(fragment));
