@@ -1,0 +1,19 @@
+script
+  include ModeSelector.js
+
+template#ModeSelector
+  .ModeSelector
+    nav-list(
+      ::list="modes"
+      @select="selectMode"
+    )
+    course(
+      ~if="selectedMode === 'Courses'"
+      ::lectures="props.lectures",
+      ::structure="props.structure"
+    )
+    search(
+      ~if="selectedMode === 'Words'"
+      ::lectures="props.lectures",
+      ::structure="props.structure"
+    )

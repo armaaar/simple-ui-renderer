@@ -1,0 +1,17 @@
+script
+  include Search.js
+
+template#Search
+  .search
+    label.search__label(for="search-input") Search
+    input.search__input(
+      id="search-input"
+      type="text"
+      :value="searchText"
+      @input="searchTextChange"
+      onfocus="this.value = this.value;"
+    )
+  words-list(
+    ::words="words"
+    ::structure='props.structure'
+  )
