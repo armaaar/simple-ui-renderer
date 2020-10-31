@@ -6,9 +6,7 @@ template#Course
     course-selector(::courses="props.structure.courses", @select="selectCourse")
     div.course__lecture(~for="lectures", ~value="lecture")
       h1.course__lecture__title Lecture {{lecture.index}}
-      word-card(
-        ~for='lecture.words',
-        ~value='entry',
-        ::entry='entry',
+      words-list(
+        ::words="lecture.words"
         ::structure='props.structure'
       )

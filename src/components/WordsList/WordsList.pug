@@ -1,0 +1,15 @@
+script
+  include WordsList.js
+
+template#WordsList
+  .words-list__type(
+    ~for='groupedWords',
+    ~value='words',
+    ~key='type'
+  )
+    h2.words-list__type__name {{type}}s
+    word-card(
+      ~for='words',
+      ::entry='value',
+      ::structure='props.structure'
+    )

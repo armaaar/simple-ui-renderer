@@ -5,19 +5,19 @@
       "feminine",
       "neutral"
     ],
+    "job": [],
     "verb": [],
+    "adjective": [
+      "general",
+      "color"
+    ],
     "number":  [],
     "preposition": [],
     "pronoun": [],
     "affirmative": [],
     "interrogative": [],
     "question": [],
-    "sentence": [],
-    "adjective": [
-      "general",
-      "color"
-    ],
-    "job": []
+    "sentence": []
   },
   "languages": [
     "english",
