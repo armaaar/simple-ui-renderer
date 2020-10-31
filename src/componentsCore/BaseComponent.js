@@ -146,20 +146,23 @@ function BaseComponent(el, componentName) {
 
     if (node.getAttribute && node.getAttribute('~for')) {
       let loopVal = this.getPathValue({...this, ...LocalNodeVars}, node.getAttribute('~for'));
-      if (!Array.isArray(loopVal)) loopVal = [loopVal];
+      if (Array.isArray(loopVal)) loopVal = {...loopVal}
+      else if (typeof loopVal !== 'object') loopVal = {...[loopVal]}
       const nodesToClone = node.nodeName === 'TEMPLATE'
         ? Array.from(node.content.childNodes)
         : [node];
       const loopFragment = document.createDocumentFragment();
-      loopVal.forEach((value, index) => {
+      Object.entries(loopVal).forEach(([key, value], index) => {
         nodesToClone.forEach((nodeToClone) => {
           cloneNode = nodeToClone.cloneNode(true);
           cloneNode.removeAttribute('~for');
           cloneNode.removeAttribute('~value');
           cloneNode.removeAttribute('~index');
+          cloneNode.removeAttribute('~key');
           const localVars = {};
           localVars[node.getAttribute('~value') || 'value'] = value;
           localVars[node.getAttribute('~index') || 'index'] = index;
+          localVars[node.getAttribute('~key') || 'key'] = key;
           loopFragment.appendChild(cloneNode);
           this.evaluateNode(cloneNode, {...LocalNodeVars, ...localVars})
         });
