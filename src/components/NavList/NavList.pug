@@ -1,0 +1,13 @@
+script
+  include NavList.js
+
+template#NavList
+  nav.nav-list
+    ul.nav-list__list
+      li.nav-list__list__item(
+        ~for='props.list',
+        @click="() => emit('select', value)"
+      ) {{value}}
+
+
+

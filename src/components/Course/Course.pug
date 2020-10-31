@@ -3,9 +3,13 @@ script
 
 template#Course
   .course
-    course-selector(::courses="props.structure.courses", @select="selectCourse")
+    nav-list(
+      ::list="props.structure.courses"
+      @select="selectCourse"
+    )
+    h1.course__title {{selectedCourse}}
     div.course__lecture(~for="lectures", ~value="lecture")
-      h1.course__lecture__title Lecture {{lecture.index}}
+      h2.course__lecture__title Lecture {{lecture.index}}
       words-list(
         ::words="lecture.words"
         ::structure='props.structure'
