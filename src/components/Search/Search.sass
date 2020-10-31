@@ -1,8 +1,10 @@
 .search
   margin-bottom: 20px
   &__label
+    @include icon('\1F50D')
     display: block
-    margin-bottom: 10px
+    &::before
+      font-size: $font-size-s
   &__input
     display: block
     width: 100%
