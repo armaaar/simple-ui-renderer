@@ -43,58 +43,11 @@ function BaseComponent(el, componentName) {
   // get template
   this.template = document.querySelector(`template#${componentName}`).innerHTML;
 
-  // Mompute the final value of a path or properties from this object
-  this.getPathValue = (baseObject, pathString, options = {}) => {
-    const returnOptions = {
-      quotes: false,
-      stringfy: false,
-      ...options
+  this.stringfy = (value) => {
+    if (typeof value !== 'string') {
+      return JSON.stringify(value)
     }
-    // Used to get a function's return value
-    const callFunctionFromPath = (baseObject, functionPath) => {
-      const [functionName, paramsStr] = functionPath.slice(0, -1).split('(')
-      const paramsArr = paramsStr.replaceAll(/(\s|\t|\n|\r)/g, '').split(',');
-      return baseObject[functionName](...paramsArr);
-    }
-
-    // Create a string containing an Immediately-invoked Function to use for event attributes 'e.g. onclick'
-    // is an Immediately-invoked Function
-    let isIIFE = false;
-    const stringfyFunction = (func) => {
-      isIIFE = true;
-      let strFunc = `(${func.toString()})()`;
-      const thisRefrences = [...strFunc.matchAll(/this((\n*\s*\t*\r*\.\w+(\(\w*\))?)+)/g)];
-      thisRefrences.forEach(([expression , path]) => {
-        strFunc = strFunc.replace(expression, this.getPathValue(baseObject, path.substring(1), {quotes: true}))
-      })
-      return strFunc;
-    }
-
-    // loop though path
-    let value = pathString.trim().split('.').reduce(
-      (target, current) => {
-        // get function return value
-        if (current.endsWith(')')) {
-          return callFunctionFromPath(target, current)
-        }
-        // get IIFE
-        if (typeof target[current] === 'function') {
-          return stringfyFunction(target[current])
-        }
-        // get evaluated Fragments
-        if (target[current].nodeType === 11) {
-          return this.evaluateFragment(target[current], true)
-        }
-        return target[current]
-      },
-    baseObject);
-
-    if (returnOptions.stringfy && typeof value !== 'string') {
-      value = JSON.stringify(value)
-    }
-
-    // quates should always be used around strings unless this is an attribute inside DOM
-    return !returnOptions.quotes || isIIFE ? value : `'${value}'`;
+    return value;
   }
 
   let previousCondition = null;
@@ -145,7 +98,7 @@ function BaseComponent(el, componentName) {
     }
 
     if (node.getAttribute && node.getAttribute('~for')) {
-      let loopVal = this.getPathValue({...this, ...LocalNodeVars}, node.getAttribute('~for'));
+      let loopVal = compileCode(node.getAttribute('~for'), {...this, ...LocalNodeVars});
       if (Array.isArray(loopVal)) loopVal = {...loopVal}
       else if (typeof loopVal !== 'object') loopVal = {...[loopVal]}
       const nodesToClone = node.nodeName === 'TEMPLATE'
@@ -189,7 +142,7 @@ function BaseComponent(el, componentName) {
         if (attribute.name[0] === ':') {
           node.removeAttribute(attribute.name)
           if (attribute.name === ':slot') { // is slot
-            const value = this.getPathValue(this.slots, attribute.value)
+            const value =  this.slots[attribute.value]
             if (node.nodeName === 'TEMPLATE') {
               node.content.appendChild(value)
             } else {
@@ -197,7 +150,7 @@ function BaseComponent(el, componentName) {
             }
           } else {
             const pureAttrName = attribute.name.substring(1);
-            const value = this.getPathValue({...this, ...LocalNodeVars}, attribute.value, { stringfy:true })
+            const value = this.stringfy(compileCode(attribute.value, {...this, ...LocalNodeVars}))
             node.setAttribute(pureAttrName, value)
           }
         } else if (attribute.name[0] === '@') {
