@@ -19,7 +19,7 @@ function Search(el) {
     const searchIn = [
       entry.word,
       ...this.props.structure.languages.map((language) => entry[language])
-    ]
+    ];
     if (entry.variations) {
       searchIn.push(...entry.variations)
     }
@@ -29,9 +29,7 @@ function Search(el) {
   };
 
   this.prerender = () => {
-    this.words = this.props.lectures.reduce((allWords, lecture) => (
-      allWords.concat(lecture.words.filter(searchWord))
-    ), []);
+    this.words = window.allWords.filter(searchWord);
   }
 
   this.render();

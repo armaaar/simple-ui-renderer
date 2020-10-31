@@ -5,8 +5,14 @@ block title
 block content
   -
     const { readJson } = require('./src/utils/readJson.js')
-    let { lectures } = readJson('./data/words.json');
-    let structure = readJson('./data/structure.json');
+    const { lectures } = readJson('./data/words.json');
+    const structure = readJson('./data/structure.json');
+    const allWords = lectures.reduce((words, lecture) => (
+      words.concat(lecture.words)
+    ), []);
+
+  script.
+    window.allWords = !{JSON.stringify(allWords)};
 
   mode-selector(:lectures=(lectures), :structure=(structure))
 
